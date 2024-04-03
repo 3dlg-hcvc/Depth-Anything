@@ -1,8 +1,9 @@
+from pathlib import Path
 import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from huggingface_hub import PyTorchModelHubMixin, hf_hub_download
+# from huggingface_hub import PyTorchModelHubMixin, hf_hub_download
 
 from depth_anything.blocks import FeatureFusionBlock, _make_scratch
 
@@ -144,7 +145,7 @@ class DPT_DINOv2(nn.Module):
         
         # in case the Internet connection is not stable, please load the DINOv2 locally
         if localhub:
-            self.pretrained = torch.hub.load('torchhub/facebookresearch_dinov2_main', 'dinov2_{:}14'.format(encoder), source='local', pretrained=False)
+            self.pretrained = torch.hub.load(Path(__file__).parent.parent / 'torchhub/facebookresearch_dinov2_main', 'dinov2_{:}14'.format(encoder), source='local', pretrained=False)
         else:
             self.pretrained = torch.hub.load('facebookresearch/dinov2', 'dinov2_{:}14'.format(encoder))
         
@@ -166,7 +167,7 @@ class DPT_DINOv2(nn.Module):
         return depth.squeeze(1)
 
 
-class DepthAnything(DPT_DINOv2, PyTorchModelHubMixin):
+class DepthAnything(DPT_DINOv2):
     def __init__(self, config):
         super().__init__(**config)
 
